@@ -2,47 +2,42 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = 'dipeshagarwal' // Credentials ID you created
-        DOCKERHUB_USERNAME = 'dipeshagarwal'     // Replace it
-        IMAGE_NAME = 'webapp_exam'                     // Replace it
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creation')
+        IMAGE_NAME = 'dipeshagarwal/nodejs_exam_img'  // Your Docker Hub repo name
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                echo 'Cloning the GitHub repository...'
-                git url: 'https://github.com/dipeshagarwaaal/Node_App.git', branch: 'main'
+                git branch: 'main', url: 'https://github.com/dipeshagarwaaal/Node_App.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo 'Building Docker image...'
-                sh "docker build -t ${dipeshagarwal}/${webapp_exam}:latest ."
+                bat "docker build -t %IMAGE_NAME% ."
             }
         }
 
         stage('Login to Docker Hub') {
             steps {
-                echo 'Logging into Docker Hub...'
-                withCredentials([usernamePassword(credentialsId: "${dipeshagarwal}", usernameVariable: 'dipeshagarwal', passwordVariable: 'docker@25')]) {
-                    sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
-                }
+                bat "echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin"
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Push Image to Docker Hub') {
             steps {
-                echo 'Pushing Docker image to Docker Hub...'
-                sh "docker push ${dipeshagarwal}/${webapp_exam}:latest"
+                bat "docker push %IMAGE_NAME%"
             }
         }
     }
 
     post {
-        always {
-            echo 'Cleaning up...'
-            sh "docker rmi ${dipeshagarwal}/${webapp_exam}:latest || true"
+        success {
+            echo 'Docker image built and pushed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
