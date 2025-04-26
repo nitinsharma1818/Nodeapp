@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('jenkin')
+        DOCKERHUB_CREDENTIALS = credentials('nitin')
         IMAGE_NAME = 'nitin/nodeapp'  // Your Docker Hub repo name
     }
 
