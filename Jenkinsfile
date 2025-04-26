@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('jenkin')
-        IMAGE_NAME = 'nitin/nodeapp'  // Your Docker Hub repo name
+        IMAGE_NAME = 'nitin013/nodeapp'  // Your Docker Hub repo name
     }
 
     stages {
